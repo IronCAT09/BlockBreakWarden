@@ -145,17 +145,17 @@ public class BlockBreakWardenConfigScreen extends Screen {
         super.render(context, mouseX, mouseY, delta);
 
         int cx = this.width / 2;
-        context.drawCenteredTextWithShadow(this.textRenderer, this.title, cx, 12, 0xFFFFFF);
+        context.drawCenteredTextWithShadow(this.textRenderer, this.title, cx, 12, 0xFFFFFFFF);
 
         // подписи записей или сообщение о пустом списке
         if (config.entries.isEmpty()) {
             context.drawCenteredTextWithShadow(this.textRenderer,
-                    Text.translatable("label.blockbreakwarden.empty"), cx, listTopY + 6, 0xAAAAAA);
+                    Text.translatable("label.blockbreakwarden.empty"), cx, listTopY + 6, 0xFFAAAAAA);
         } else {
             for (int i = 0; i < shownEntries.size(); i++) {
                 String entry = shownEntries.get(i);
                 int rowY = listTopY + i * ROW_HEIGHT + 5;
-                int color = entry.startsWith("#") ? 0xFFD24D : 0xFFFFFF; // тэги — золотым
+                int color = entry.startsWith("#") ? 0xFFFFD24D : 0xFFFFFFFF; // тэги — золотым
                 String text = this.textRenderer.trimToWidth(entry, 210);
                 context.drawTextWithShadow(this.textRenderer, Text.literal(text), cx - 118, rowY, color);
             }
@@ -164,13 +164,13 @@ public class BlockBreakWardenConfigScreen extends Screen {
         // индикатор страницы
         context.drawCenteredTextWithShadow(this.textRenderer,
                 Text.translatable("label.blockbreakwarden.page", page + 1, maxPage() + 1),
-                cx, navY + 6, 0xCCCCCC);
+                cx, navY + 6, 0xFFCCCCCC);
 
         // подсказка о неверном вводе
         if (System.currentTimeMillis() < invalidUntil) {
             context.drawTextWithShadow(this.textRenderer,
                     Text.translatable("label.blockbreakwarden.invalid").formatted(Formatting.RED),
-                    cx - 120, inputY - 11, 0xFF5555);
+                    cx - 120, inputY - 11, 0xFFFF5555);
         }
     }
 
