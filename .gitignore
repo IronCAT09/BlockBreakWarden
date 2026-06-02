@@ -32,6 +32,10 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+### Gradle ###
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
 ### VS Code ###
 .vscode/
 

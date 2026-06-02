@@ -77,7 +77,7 @@ public class BlockBreakWardenConfigScreen extends Screen {
             int rowY = listTopY + (i - start) * ROW_HEIGHT;
             addDrawableChild(ButtonWidget.builder(Text.literal("X").formatted(Formatting.RED), button -> {
                 config.entries.remove(entry);
-                rebuildWidgets();
+                clearAndInit();
             }).dimensions(cx + 100, rowY, 20, 18).build());
             shownEntries.add(entry);
         }
@@ -87,13 +87,13 @@ public class BlockBreakWardenConfigScreen extends Screen {
         addDrawableChild(ButtonWidget.builder(Text.translatable("button.blockbreakwarden.prev"), button -> {
             if (page > 0) {
                 page--;
-                rebuildWidgets();
+                clearAndInit();
             }
         }).dimensions(cx - 120, navY, 70, 20).build());
         addDrawableChild(ButtonWidget.builder(Text.translatable("button.blockbreakwarden.next"), button -> {
             if (page < maxPage()) {
                 page++;
-                rebuildWidgets();
+                clearAndInit();
             }
         }).dimensions(cx + 50, navY, 70, 20).build());
 
@@ -114,7 +114,7 @@ public class BlockBreakWardenConfigScreen extends Screen {
         addDrawableChild(ButtonWidget.builder(Text.translatable("button.blockbreakwarden.clear").formatted(Formatting.RED), button -> {
             config.entries.clear();
             page = 0;
-            rebuildWidgets();
+            clearAndInit();
         }).dimensions(cx - 120, bottomY, 118, 20).build());
         addDrawableChild(ButtonWidget.builder(Text.translatable("button.blockbreakwarden.done"), button -> this.close())
                 .dimensions(cx + 2, bottomY, 118, 20).build());
@@ -131,7 +131,7 @@ public class BlockBreakWardenConfigScreen extends Screen {
         }
         pendingInput = "";
         page = maxPage();
-        rebuildWidgets();
+        clearAndInit();
     }
 
     private int maxPage() {
