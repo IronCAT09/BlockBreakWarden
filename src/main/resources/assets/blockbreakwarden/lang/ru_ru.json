@@ -1,0 +1,32 @@
+{
+  "category.blockbreakwarden": "BlockBreakWarden",
+  "key.blockbreakwarden.cycle_mode": "Переключить режим (Выкл / Whitelist / Blacklist)",
+  "key.blockbreakwarden.add_target": "Добавить блок перед прицелом в список",
+
+  "mode.blockbreakwarden.off": "Выключен",
+  "mode.blockbreakwarden.whitelist": "Whitelist (белый список)",
+  "mode.blockbreakwarden.blacklist": "Blacklist (чёрный список)",
+
+  "message.blockbreakwarden.blocked": "BlockBreakWarden: ломать %s запрещено",
+  "message.blockbreakwarden.mode_changed": "Режим BlockBreakWarden: %s",
+  "message.blockbreakwarden.added": "BlockBreakWarden: %s добавлен в список",
+  "message.blockbreakwarden.already": "BlockBreakWarden: %s уже есть в списке",
+  "message.blockbreakwarden.no_target": "BlockBreakWarden: вы не смотрите на блок",
+
+  "title.blockbreakwarden.config": "BlockBreakWarden — Настройки",
+  "label.blockbreakwarden.mode": "Режим",
+  "label.blockbreakwarden.empty": "Список пуст",
+  "label.blockbreakwarden.page": "Страница %s / %s",
+  "label.blockbreakwarden.input_hint": "namespace:block или #namespace:tag",
+  "label.blockbreakwarden.invalid": "Неверный идентификатор",
+
+  "button.blockbreakwarden.warnings_on": "Предупреждения: ВКЛ",
+  "button.blockbreakwarden.warnings_off": "Предупреждения: ВЫКЛ",
+  "button.blockbreakwarden.sound_on": "Звук: ВКЛ",
+  "button.blockbreakwarden.sound_off": "Звук: ВЫКЛ",
+  "button.blockbreakwarden.add": "Добавить",
+  "button.blockbreakwarden.clear": "Очистить список",
+  "button.blockbreakwarden.prev": "< Назад",
+  "button.blockbreakwarden.next": "Вперёд >",
+  "button.blockbreakwarden.done": "Готово"
+}

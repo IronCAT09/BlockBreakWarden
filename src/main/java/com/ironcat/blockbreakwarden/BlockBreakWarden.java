@@ -1,0 +1,162 @@
+package com.ironcat.blockbreakwarden;
+
+import com.ironcat.blockbreakwarden.gui.BlockBreakWardenConfigScreen;
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.sound.PositionedSoundInstance;
+import net.minecraft.client.util.InputUtil;
+import net.minecraft.registry.Registries;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
+import org.lwjgl.glfw.GLFW;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class BlockBreakWarden implements ClientModInitializer {
+
+    public static final String MOD_ID = "blockbreakwarden";
+    public static final Logger LOGGER = LoggerFactory.getLogger("BlockBreakWarden");
+
+    private static KeyBinding cycleModeKey;
+    private static KeyBinding addTargetKey;
+
+    /** Чтобы не спамить предупреждениями при удержании ЛКМ. */
+    private long lastWarnTime = 0L;
+
+    @Override
+    public void onInitializeClient() {
+        BlockBreakWardenConfig.load();
+        registerKeyBindings();
+        registerTickHandler();
+        registerBreakGuard();
+        LOGGER.info("BlockBreakWarden загружен. Текущий режим: {}", BlockBreakWardenConfig.get().mode);
+    }
+
+    private void registerKeyBindings() {
+        cycleModeKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.blockbreakwarden.cycle_mode",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_K,
+                "category.blockbreakwarden"
+        ));
+        addTargetKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.blockbreakwarden.add_target",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_N,
+                "category.blockbreakwarden"
+        ));
+    }
+
+    private void registerTickHandler() {
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            while (cycleModeKey.wasPressed()) {
+                cycleMode(client);
+            }
+            while (addTargetKey.wasPressed()) {
+                addTargetBlock(client);
+            }
+        });
+    }
+
+    private void registerBreakGuard() {
+        AttackBlockCallback.EVENT.register((player, world, hand, pos, direction) -> {
+            // мод чисто клиентский: вмешиваемся только на стороне клиента
+            if (!world.isClient) {
+                return ActionResult.PASS;
+            }
+            BlockState state = world.getBlockState(pos);
+            if (BreakRules.canBreak(state)) {
+                return ActionResult.PASS;
+            }
+            warn(state);
+            return ActionResult.FAIL; // отменяем ломание
+        });
+    }
+
+    // --- горячие клавиши ---
+
+    private void cycleMode(MinecraftClient client) {
+        BlockBreakWardenConfig config = BlockBreakWardenConfig.get();
+        config.mode = config.mode.next();
+        BlockBreakWardenConfig.save();
+        if (client.player != null) {
+            client.player.sendMessage(
+                    Text.translatable("message.blockbreakwarden.mode_changed",
+                            Text.translatable(config.mode.translationKey())).formatted(Formatting.YELLOW),
+                    true);
+        }
+    }
+
+    private void addTargetBlock(MinecraftClient client) {
+        if (client.player == null || client.world == null) {
+            return;
+        }
+        HitResult hit = client.crosshairTarget;
+        if (!(hit instanceof BlockHitResult blockHit) || hit.getType() != HitResult.Type.BLOCK) {
+            client.player.sendMessage(
+                    Text.translatable("message.blockbreakwarden.no_target").formatted(Formatting.GRAY), true);
+            return;
+        }
+
+        BlockPos pos = blockHit.getBlockPos();
+        BlockState state = client.world.getBlockState(pos);
+        Identifier id = Registries.BLOCK.getId(state.getBlock());
+        String entry = id.toString();
+
+        BlockBreakWardenConfig config = BlockBreakWardenConfig.get();
+        if (config.entries.contains(entry)) {
+            client.player.sendMessage(
+                    Text.translatable("message.blockbreakwarden.already", entry).formatted(Formatting.GRAY), true);
+            return;
+        }
+        config.entries.add(entry);
+        BlockBreakWardenConfig.save();
+        client.player.sendMessage(
+                Text.translatable("message.blockbreakwarden.added", entry).formatted(Formatting.GREEN), true);
+    }
+
+    // --- предупреждение ---
+
+    private void warn(BlockState state) {
+        BlockBreakWardenConfig config = BlockBreakWardenConfig.get();
+        if (!config.showWarnings) {
+            return;
+        }
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client.player == null) {
+            return;
+        }
+        long now = System.currentTimeMillis();
+        if (now - lastWarnTime < 800L) {
+            return;
+        }
+        lastWarnTime = now;
+
+        client.player.sendMessage(
+                Text.translatable("message.blockbreakwarden.blocked",
+                        state.getBlock().getName()).formatted(Formatting.RED),
+                true);
+
+        if (config.warningSound) {
+            client.getSoundManager().play(
+                    PositionedSoundInstance.master(SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(), 0.6F));
+        }
+    }
+
+    /** Открыть экран настроек (используется Mod Menu и может быть вызвано напрямую). */
+    public static BlockBreakWardenConfigScreen createConfigScreen(Screen parent) {
+        return new BlockBreakWardenConfigScreen(parent);
+    }
+}

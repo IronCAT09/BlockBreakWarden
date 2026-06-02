@@ -1,0 +1,32 @@
+{
+  "category.blockbreakwarden": "BlockBreakWarden",
+  "key.blockbreakwarden.cycle_mode": "Cycle mode (Off / Whitelist / Blacklist)",
+  "key.blockbreakwarden.add_target": "Add target block to the list",
+
+  "mode.blockbreakwarden.off": "Off",
+  "mode.blockbreakwarden.whitelist": "Whitelist",
+  "mode.blockbreakwarden.blacklist": "Blacklist",
+
+  "message.blockbreakwarden.blocked": "BlockBreakWarden: breaking %s is not allowed",
+  "message.blockbreakwarden.mode_changed": "BlockBreakWarden mode: %s",
+  "message.blockbreakwarden.added": "BlockBreakWarden: added %s to the list",
+  "message.blockbreakwarden.already": "BlockBreakWarden: %s is already in the list",
+  "message.blockbreakwarden.no_target": "BlockBreakWarden: you are not looking at a block",
+
+  "title.blockbreakwarden.config": "BlockBreakWarden — Settings",
+  "label.blockbreakwarden.mode": "Mode",
+  "label.blockbreakwarden.empty": "The list is empty",
+  "label.blockbreakwarden.page": "Page %s / %s",
+  "label.blockbreakwarden.input_hint": "namespace:block or #namespace:tag",
+  "label.blockbreakwarden.invalid": "Invalid identifier",
+
+  "button.blockbreakwarden.warnings_on": "Warnings: ON",
+  "button.blockbreakwarden.warnings_off": "Warnings: OFF",
+  "button.blockbreakwarden.sound_on": "Sound: ON",
+  "button.blockbreakwarden.sound_off": "Sound: OFF",
+  "button.blockbreakwarden.add": "Add",
+  "button.blockbreakwarden.clear": "Clear list",
+  "button.blockbreakwarden.prev": "< Prev",
+  "button.blockbreakwarden.next": "Next >",
+  "button.blockbreakwarden.done": "Done"
+}

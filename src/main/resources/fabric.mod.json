@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "blockbreakwarden",
+  "version": "${version}",
+  "name": "BlockBreakWarden",
+  "description": "Ограничивает, какие блоки игрок может ломать (режимы whitelist/blacklist по тэгам и ID), с предупреждениями, горячими клавишами и настройкой через GUI / Mod Menu.",
+  "authors": [
+    "ironcat"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.ironcat.blockbreakwarden.BlockBreakWarden"
+    ],
+    "modmenu": [
+      "com.ironcat.blockbreakwarden.integration.BlockBreakWardenModMenu"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.0",
+    "fabric-api": "*",
+    "minecraft": "~1.21.8",
+    "java": ">=21"
+  },
+  "suggests": {
+    "modmenu": "*"
+  }
+}
