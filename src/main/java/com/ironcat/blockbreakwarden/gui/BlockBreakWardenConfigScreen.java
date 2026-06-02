@@ -140,7 +140,8 @@ public class BlockBreakWardenConfigScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.renderBackground(context, mouseX, mouseY, delta);
+        // Screen.render() уже сам рисует фон с блюром (MC 1.21.6+),
+        // повторный renderBackground() здесь вызывает "Can only blur once per frame".
         super.render(context, mouseX, mouseY, delta);
 
         int cx = this.width / 2;
