@@ -1,7 +1,7 @@
 {
   "category.blockbreakwarden": "BlockBreakWarden",
   "key.blockbreakwarden.cycle_mode": "Cycle mode (Off / Whitelist / Blacklist)",
-  "key.blockbreakwarden.add_target": "Add target block to the list",
+  "key.blockbreakwarden.add_target": "Add/remove target block in the list",
 
   "mode.blockbreakwarden.off": "Off",
   "mode.blockbreakwarden.whitelist": "Whitelist",
@@ -10,6 +10,7 @@
   "message.blockbreakwarden.blocked": "BlockBreakWarden: breaking %s is not allowed",
   "message.blockbreakwarden.mode_changed": "BlockBreakWarden mode: %s",
   "message.blockbreakwarden.added": "BlockBreakWarden: added %s to the list",
+  "message.blockbreakwarden.removed": "BlockBreakWarden: removed %s from the list",
   "message.blockbreakwarden.already": "BlockBreakWarden: %s is already in the list",
   "message.blockbreakwarden.no_target": "BlockBreakWarden: you are not looking at a block",
 

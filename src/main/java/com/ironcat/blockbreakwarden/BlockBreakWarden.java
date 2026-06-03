@@ -116,9 +116,11 @@ public class BlockBreakWarden implements ClientModInitializer {
         String entry = id.toString();
 
         BlockBreakWardenConfig config = BlockBreakWardenConfig.get();
-        if (config.entries.contains(entry)) {
+        // повторное нажатие на уже добавленный блок убирает его из списка
+        if (config.entries.remove(entry)) {
+            BlockBreakWardenConfig.save();
             client.player.sendMessage(
-                    Text.translatable("message.blockbreakwarden.already", entry).formatted(Formatting.GRAY), true);
+                    Text.translatable("message.blockbreakwarden.removed", entry).formatted(Formatting.YELLOW), true);
             return;
         }
         config.entries.add(entry);
