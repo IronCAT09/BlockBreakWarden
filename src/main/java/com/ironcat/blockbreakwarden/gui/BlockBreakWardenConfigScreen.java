@@ -20,8 +20,10 @@ import java.util.List;
  */
 public class BlockBreakWardenConfigScreen extends Screen {
 
-    private static final int ENTRIES_PER_PAGE = 6;
     private static final int ROW_HEIGHT = 20;
+
+    /** Сколько строк списка влезает на страницу; вычисляется в init() от высоты экрана. */
+    private int entriesPerPage = 1;
 
     private final Screen parent;
     private final BlockBreakWardenConfig config;
@@ -79,12 +81,22 @@ public class BlockBreakWardenConfigScreen extends Screen {
         }).dimensions(cx - 120, y, 240, 20).build());
         y += 28;
 
+        // --- нижние ряды привязаны к низу экрана (снизу вверх), чтобы не наезжать
+        //     друг на друга при маленьком окне или крупном масштабе интерфейса ---
+        listTopY = y;
+        int bottomY = this.height - 28;  // ряд «Очистить / Готово»
+        inputY = bottomY - 24;           // поле ввода + «Добавить»
+        navY = inputY - 24;              // навигация «Назад / Вперёд» + номер страницы
+
+        // число строк списка = сколько ROW_HEIGHT-строк влезает между заголовком и навигацией
+        int available = navY - listTopY - 4;
+        entriesPerPage = Math.max(1, available / ROW_HEIGHT);
+
         // --- список записей (текущая страница выбранного списка) ---
         final List<String> entries = config.entriesFor(editing);
-        listTopY = y;
         page = Math.max(0, Math.min(page, maxPage()));
-        int start = page * ENTRIES_PER_PAGE;
-        int end = Math.min(entries.size(), start + ENTRIES_PER_PAGE);
+        int start = page * entriesPerPage;
+        int end = Math.min(entries.size(), start + entriesPerPage);
         for (int i = start; i < end; i++) {
             final String entry = entries.get(i);
             int rowY = listTopY + (i - start) * ROW_HEIGHT;
@@ -96,7 +108,6 @@ public class BlockBreakWardenConfigScreen extends Screen {
         }
 
         // --- навигация по страницам ---
-        navY = listTopY + ENTRIES_PER_PAGE * ROW_HEIGHT + 2;
         addDrawableChild(ButtonWidget.builder(Text.translatable("button.blockbreakwarden.prev"), button -> {
             if (page > 0) {
                 page--;
@@ -111,7 +122,6 @@ public class BlockBreakWardenConfigScreen extends Screen {
         }).dimensions(cx + 50, navY, 70, 20).build());
 
         // --- добавление новой записи ---
-        inputY = navY + 26;
         inputField = new TextFieldWidget(this.textRenderer, cx - 120, inputY, 175, 20, Text.empty());
         inputField.setMaxLength(256);
         inputField.setText(pendingInput);
@@ -122,8 +132,7 @@ public class BlockBreakWardenConfigScreen extends Screen {
         addDrawableChild(ButtonWidget.builder(Text.translatable("button.blockbreakwarden.add"), button -> addEntry())
                 .dimensions(cx + 60, inputY, 60, 20).build());
 
-        // --- нижний ряд: очистить / готово ---
-        int bottomY = this.height - 28;
+        // --- нижний ряд: очистить / готово (bottomY вычислен выше) ---
         addDrawableChild(ButtonWidget.builder(Text.translatable("button.blockbreakwarden.clear").formatted(Formatting.RED), button -> {
             config.entriesFor(editing).clear();
             page = 0;
@@ -150,7 +159,7 @@ public class BlockBreakWardenConfigScreen extends Screen {
 
     private int maxPage() {
         int size = config.entriesFor(editing).size();
-        return size == 0 ? 0 : (size - 1) / ENTRIES_PER_PAGE;
+        return size == 0 ? 0 : (size - 1) / entriesPerPage;
     }
 
     @Override
