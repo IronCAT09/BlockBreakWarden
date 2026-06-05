@@ -36,6 +36,10 @@ build/
 .gradle/
 !gradle/wrapper/gradle-wrapper.jar
 
+### Stonecutter (generated per-version build nodes) ###
+versions/
+!versions/**/src/
+
 ### VS Code ###
 .vscode/
 

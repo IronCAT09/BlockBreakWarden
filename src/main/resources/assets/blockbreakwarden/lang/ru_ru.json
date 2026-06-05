@@ -1,5 +1,6 @@
 {
   "category.blockbreakwarden": "BlockBreakWarden",
+  "key.category.blockbreakwarden.main": "BlockBreakWarden",
   "key.blockbreakwarden.cycle_mode": "Переключить режим (Выкл / Whitelist / Blacklist)",
   "key.blockbreakwarden.add_target": "Добавить/убрать блок перед прицелом в списке",
 
@@ -13,9 +14,11 @@
   "message.blockbreakwarden.removed": "BlockBreakWarden: %s убран из списка",
   "message.blockbreakwarden.already": "BlockBreakWarden: %s уже есть в списке",
   "message.blockbreakwarden.no_target": "BlockBreakWarden: вы не смотрите на блок",
+  "message.blockbreakwarden.off_no_list": "BlockBreakWarden: сначала включите режим Whitelist или Blacklist",
 
   "title.blockbreakwarden.config": "BlockBreakWarden — Настройки",
   "label.blockbreakwarden.mode": "Режим",
+  "label.blockbreakwarden.editing_list": "Редактируем список",
   "label.blockbreakwarden.empty": "Список пуст",
   "label.blockbreakwarden.page": "Страница %s / %s",
   "label.blockbreakwarden.input_hint": "namespace:block или #namespace:tag",

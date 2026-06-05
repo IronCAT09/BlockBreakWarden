@@ -24,10 +24,10 @@ public final class BreakRules {
         BlockBreakWardenConfig config = BlockBreakWardenConfig.get();
         return switch (config.mode) {
             case OFF -> true;
-            // в whitelist разрешено ломать только то, что есть в списке
-            case WHITELIST -> matches(state, config.entries);
-            // в blacklist запрещено ломать то, что есть в списке
-            case BLACKLIST -> !matches(state, config.entries);
+            // в whitelist разрешено ломать только то, что есть в whitelist-списке
+            case WHITELIST -> matches(state, config.whitelistEntries);
+            // в blacklist запрещено ломать то, что есть в blacklist-списке
+            case BLACKLIST -> !matches(state, config.blacklistEntries);
         };
     }
 

@@ -6,7 +6,23 @@
       "WebFetch(domain:api.modrinth.com)",
       "Bash(rm -f pom.xml)",
       "Bash(rm -rf .mvn)",
-      "Bash(rm -rf src/main/java/org/example)"
+      "Bash(rm -rf src/main/java/org/example)",
+      "Bash(gradle --version)",
+      "PowerShell(Write-Output \"JAVA:\"; try { \\(Get-Command java -ErrorAction Stop\\).Source; java -version } catch { \"no java on PATH\" }; Write-Output \"JAVA_HOME=$env:JAVA_HOME\"; Write-Output \"GRADLE:\"; try { \\(Get-Command gradle -ErrorAction Stop\\).Source } catch { \"no gradle\" })",
+      "Bash(git check-ignore *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "PowerShell(git remote *)",
+      "PowerShell(git push *)",
+      "PowerShell(git ls-remote *)",
+      "Bash(git push *)",
+      "Bash(unzip -l \"/h/YandexDisk/IdeaProjects/BlockBreakWarden/build/libs/blockbreakwarden-1.0.0.jar\")",
+      "Bash(./gradlew compileJava -q)",
+      "Bash(cmd.exe /c gradlew.bat compileJava -q)",
+      "Read(//c/Users/Admin/.gradle/wrapper/dists/gradle-8.14.3-bin/**)",
+      "Read(//c/Program Files/JetBrains/IntelliJ IDEA 2025.3/jbr/bin/**)",
+      "Bash(\"/c/Program Files/JetBrains/IntelliJ IDEA 2025.3/jbr/bin/java.exe\" -version)",
+      "Bash(git rev-list *)"
     ]
   }
 }

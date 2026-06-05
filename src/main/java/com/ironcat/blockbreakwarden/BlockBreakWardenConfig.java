@@ -14,11 +14,12 @@ import java.util.List;
 /**
  * Конфиг мода. Сохраняется в config/blockbreakwarden.json.
  *
- * <p>{@link #entries} хранит записи двух видов:
+ * <p>{@link #whitelistEntries} и {@link #blacklistEntries} хранят записи двух видов:
  * <ul>
  *     <li>ID блока, например {@code minecraft:oak_log};</li>
  *     <li>тэг блока с префиксом {@code #}, например {@code #minecraft:logs}.</li>
  * </ul>
+ * Whitelist и blacklist — независимые списки, редактируются раздельно.
  */
 public class BlockBreakWardenConfig {
 
@@ -31,7 +32,18 @@ public class BlockBreakWardenConfig {
     public Mode mode = Mode.OFF;
     public boolean showWarnings = true;
     public boolean warningSound = true;
-    public List<String> entries = new ArrayList<>();
+    /** Записи для режима whitelist (ломать можно только их). */
+    public List<String> whitelistEntries = new ArrayList<>();
+    /** Записи для режима blacklist (ломать нельзя только их). */
+    public List<String> blacklistEntries = new ArrayList<>();
+
+    /**
+     * Устаревшее единое поле (до 1.0.2). Оставлено только для миграции старого
+     * конфига в {@link #whitelistEntries}/{@link #blacklistEntries}. Не сериализуется,
+     * пока {@code null} (Gson по умолчанию не пишет null-поля).
+     */
+    @Deprecated
+    public List<String> entries;
 
     /** Текущий конфиг (ленивая загрузка). */
     public static BlockBreakWardenConfig get() {
@@ -58,9 +70,30 @@ public class BlockBreakWardenConfig {
         }
         // защита от повреждённого/устаревшего json
         if (loaded.mode == null) loaded.mode = Mode.OFF;
-        if (loaded.entries == null) loaded.entries = new ArrayList<>();
+        if (loaded.whitelistEntries == null) loaded.whitelistEntries = new ArrayList<>();
+        if (loaded.blacklistEntries == null) loaded.blacklistEntries = new ArrayList<>();
+
+        // миграция старого единого списка (до 1.0.2) в список, соответствующий режиму
+        if (loaded.entries != null && !loaded.entries.isEmpty()) {
+            List<String> target = loaded.entriesFor(
+                    loaded.mode == Mode.BLACKLIST ? Mode.BLACKLIST : Mode.WHITELIST);
+            for (String entry : loaded.entries) {
+                if (entry != null && !target.contains(entry)) {
+                    target.add(entry);
+                }
+            }
+        }
+        loaded.entries = null; // больше не сохраняем устаревшее поле
 
         instance = loaded;
+    }
+
+    /**
+     * Список записей для указанного режима. Для {@link Mode#OFF} возвращает
+     * whitelist (нейтральный выбор по умолчанию).
+     */
+    public List<String> entriesFor(Mode mode) {
+        return mode == Mode.BLACKLIST ? blacklistEntries : whitelistEntries;
     }
 
     public static void save() {

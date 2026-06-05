@@ -24,6 +24,8 @@ import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public class BlockBreakWarden implements ClientModInitializer {
 
     public static final String MOD_ID = "blockbreakwarden";
@@ -45,17 +47,30 @@ public class BlockBreakWarden implements ClientModInitializer {
     }
 
     private void registerKeyBindings() {
+        // 1.21.9+: категория клавиш — это KeyBinding.Category, а не строковый ключ перевода.
+        // Категорию регистрируем один раз: повторный create() с тем же id бросает исключение.
+        //? if >=1.21.9 {
+        /*KeyBinding.Category category = KeyBinding.Category.create(Identifier.of(MOD_ID, "main"));*/
+        //?}
         cycleModeKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.blockbreakwarden.cycle_mode",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_K,
+                //? if >=1.21.9 {
+                /*category*/
+                //?} else {
                 "category.blockbreakwarden"
+                //?}
         ));
         addTargetKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.blockbreakwarden.add_target",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_N,
+                //? if >=1.21.9 {
+                /*category*/
+                //?} else {
                 "category.blockbreakwarden"
+                //?}
         ));
     }
 
@@ -73,7 +88,7 @@ public class BlockBreakWarden implements ClientModInitializer {
     private void registerBreakGuard() {
         AttackBlockCallback.EVENT.register((player, world, hand, pos, direction) -> {
             // мод чисто клиентский: вмешиваемся только на стороне клиента
-            if (!world.isClient) {
+            if (!world.isClient()) {
                 return ActionResult.PASS;
             }
             BlockState state = world.getBlockState(pos);
@@ -116,14 +131,22 @@ public class BlockBreakWarden implements ClientModInitializer {
         String entry = id.toString();
 
         BlockBreakWardenConfig config = BlockBreakWardenConfig.get();
+        // в режиме OFF нет активного списка — нечего редактировать
+        if (config.mode == Mode.OFF) {
+            client.player.sendMessage(
+                    Text.translatable("message.blockbreakwarden.off_no_list").formatted(Formatting.GRAY), true);
+            return;
+        }
+        // хоткей редактирует список текущего режима (whitelist или blacklist)
+        List<String> list = config.entriesFor(config.mode);
         // повторное нажатие на уже добавленный блок убирает его из списка
-        if (config.entries.remove(entry)) {
+        if (list.remove(entry)) {
             BlockBreakWardenConfig.save();
             client.player.sendMessage(
                     Text.translatable("message.blockbreakwarden.removed", entry).formatted(Formatting.YELLOW), true);
             return;
         }
-        config.entries.add(entry);
+        list.add(entry);
         BlockBreakWardenConfig.save();
         client.player.sendMessage(
                 Text.translatable("message.blockbreakwarden.added", entry).formatted(Formatting.GREEN), true);
@@ -152,8 +175,13 @@ public class BlockBreakWarden implements ClientModInitializer {
                 true);
 
         if (config.warningSound) {
+            // 1.21.9+: PositionedSoundInstance.master(...) удалён; ui(...) принимает RegistryEntry.
             client.getSoundManager().play(
+                    //? if >=1.21.9 {
+                    /*PositionedSoundInstance.ui(SoundEvents.BLOCK_NOTE_BLOCK_BASS, 0.6F));*/
+                    //?} else {
                     PositionedSoundInstance.master(SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(), 0.6F));
+                    //?}
         }
     }
 
